@@ -5,6 +5,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.tjorven.musicquiz.groups.GameStorage;
+import org.tjorven.musicquiz.messages.ConnectionMessage;
 import org.tjorven.musicquiz.server.WebSocketEventListener;
 
 @Controller
@@ -24,8 +25,9 @@ public class ButtonController {
 
     @MessageMapping("/get-group-click")
     @SendTo("/topic/updates")
-    public String handleGetGroupButtonPress(@Header("simpSessionId") String sessionId, String message) {
-        GameStorage.getInstance().addClientToGame(sessionId, message);
-        return "Gruppe 1: " + message;
+    public String handleGetGroupButtonPress(@Header("simpSessionId") String sessionId, ConnectionMessage message) {
+        System.out.println("Client " + message.getUserName() + " hat Gruppe " + message.getGameID() + " angefordert");
+        GameStorage.getInstance().addClientToGame(message.getUserName(), message.getGameID());
+        return "Gruppe: " + message.getGameID() + " hinzugefügt";
     }
 }

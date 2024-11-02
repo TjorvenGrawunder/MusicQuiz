@@ -26,12 +26,12 @@ public class GameStorage {
         return instance;
     }
 
-    public void addClientToGame(String sessionId, String gameID) {
+    public void addClientToGame(String userName, String gameID) {
         if (games.containsKey(gameID)) {
-            games.get(sessionId).addMember(new Player(sessionId));
+            games.get(userName).addMember(new Player(userName));
         } else {
-            games.put(sessionId, new Game(gameID));
-            games.get(sessionId).addMember(new Player(sessionId));
+            games.put(userName, new Game(gameID));
+            games.get(userName).addMember(new Player(userName));
         }
     }
 }

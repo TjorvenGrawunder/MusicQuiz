@@ -11,7 +11,11 @@
 
     function getGroup() {
         // Nachricht senden, dass der Button geklickt wurde
-        stompClient.send("/app/get-group-click", {}, document.getElementById('gameID').value);
+        const message = {
+            userName: document.getElementById('userName').value,
+            gameID: document.getElementById('gameID').value
+        }
+        stompClient.send("/app/get-group-click", {}, JSON.stringify(message));
 
         // GameID speichern
         sessionStorage.setItem('gameID', document.getElementById('gameID').value);
