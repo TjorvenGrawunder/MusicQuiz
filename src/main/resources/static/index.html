@@ -8,7 +8,20 @@
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.4.0/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <script>
-        let stompClient = null;
+
+    function getGroup() {
+        // Nachricht senden, dass der Button geklickt wurde
+        stompClient.send("/app/get-group-click", {}, document.getElementById('gameID').value);
+
+        // GameID speichern
+        sessionStorage.setItem('gameID', document.getElementById('gameID').value);
+        // UserName speichern
+        sessionStorage.setItem('userName', document.getElementById('userName').value);
+        // Weiterleitung zur Gruppenauswahl
+        window.location.href = "quiz-room.html";
+    }
+
+    let stompClient = null;
 
         function connect() {
             const socket = new SockJS('/ws');
@@ -22,11 +35,6 @@
             });
         }
 
-        function sendButtonClick() {
-            // Nachricht senden, dass der Button geklickt wurde
-            stompClient.send("/app/button-click", {}, {});
-        }
-
         document.addEventListener("DOMContentLoaded", function() {
             connect();
         });
@@ -35,6 +43,10 @@
 <body>
 <h1>Musik Quiz</h1>
 <div id="content"></div>
-<button type="button" onclick="sendButtonClick()">Buzzer</button>
+<label for="userName">User Name:</label>
+<input type="text" id="userName" name="userName"><br><br>
+<label for="gameID">Game ID:</label>
+<input type="text" id="gameID" name="gameID"><br><br>
+<button type="button" onclick="getGroup()">Connect to Group</button>
 </body>
 </html>
