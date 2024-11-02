@@ -5,6 +5,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.tjorven.musicquiz.groups.Game;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -12,21 +13,21 @@ import java.util.concurrent.ConcurrentMap;
 @Component
 public class WebSocketEventListener {
 
-    private final SimpMessagingTemplate messagingTemplate;
+    private final WebSocketService webSocketService;
 
     // Thread-sichere Map zur Speicherung verbundener Clients
     private static final ConcurrentMap<String, String> connectedClients = new ConcurrentHashMap<>();
 
-    public WebSocketEventListener(SimpMessagingTemplate messagingTemplate) {
-        this.messagingTemplate = messagingTemplate;
+    public WebSocketEventListener(WebSocketService webSocketService) {
+        this.webSocketService = webSocketService;
     }
 
     // Client-Verbindung erfassen
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectEvent event) {
         String sessionId = event.getMessage().getHeaders().get("simpSessionId").toString();
-        connectedClients.put(sessionId, "verbunden");
-        System.out.println("Client verbunden: " + sessionId);
+        connectedClients.put(sessionId, "connected");
+        webSocketService.notifyAllClients("Neuer Client verbunden: " + sessionId);
     }
 
     // Client-Trennung erfassen
@@ -34,13 +35,10 @@ public class WebSocketEventListener {
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         String sessionId = event.getSessionId();
         connectedClients.remove(sessionId);
-        System.out.println("Client getrennt: " + sessionId);
+        webSocketService.notifyAllClients("Client getrennt: " + sessionId);
     }
 
-    // Nachricht an alle verbundenen Clients senden
-    public void notifyAllClients(String message) {
-        messagingTemplate.convertAndSend("/topic/updates", message);
-    }
+
 
     // Alle verbundenen Clients abrufen
     public static ConcurrentMap<String, String> getConnectedClients() {

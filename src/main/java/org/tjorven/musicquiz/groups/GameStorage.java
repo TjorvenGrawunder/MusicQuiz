@@ -1,10 +1,13 @@
 package org.tjorven.musicquiz.groups;
 
+import org.tjorven.musicquiz.server.WebSocketService;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GameStorage {
     private static GameStorage instance;
+    private WebSocketService webSocketService;
 
     private HashMap<String, Game> games = new HashMap<>();
 
@@ -33,5 +36,9 @@ public class GameStorage {
             games.put(userName, new Game(gameID));
             games.get(userName).addMember(new Player(userName));
         }
+    }
+
+    public void setWebSocketService(WebSocketService webSocketService) {
+        this.webSocketService = webSocketService;
     }
 }

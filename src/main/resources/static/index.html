@@ -9,20 +9,20 @@
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <script>
 
-    function getGroup() {
+    function getGame() {
         // Nachricht senden, dass der Button geklickt wurde
         const message = {
             userName: document.getElementById('userName').value,
             gameID: document.getElementById('gameID').value
         }
-        stompClient.send("/app/get-group-click", {}, JSON.stringify(message));
+        stompClient.send("/app/get-game-click", {}, JSON.stringify(message));
 
         // GameID speichern
         sessionStorage.setItem('gameID', document.getElementById('gameID').value);
         // UserName speichern
         sessionStorage.setItem('userName', document.getElementById('userName').value);
-        // Weiterleitung zur Gruppenauswahl
-        window.location.href = "quiz-room.html";
+        // load next page
+        window.location.assign("quiz-room.html");
     }
 
     let stompClient = null;
@@ -31,7 +31,6 @@
             const socket = new SockJS('/ws');
             stompClient = Stomp.over(socket);
             stompClient.connect({}, function (frame) {
-                console.log('Verbunden: ' + frame);
                 stompClient.subscribe('/topic/updates', function (message) {
                     // Nachricht, die an alle Clients gesendet wird, anzeigen
                     document.getElementById('content').innerText = message.body;
@@ -51,6 +50,6 @@
 <input type="text" id="userName" name="userName"><br><br>
 <label for="gameID">Game ID:</label>
 <input type="text" id="gameID" name="gameID"><br><br>
-<button type="button" onclick="getGroup()">Connect to Group</button>
+<button type="button" onclick="getGame()">Connect to Group</button>
 </body>
 </html>

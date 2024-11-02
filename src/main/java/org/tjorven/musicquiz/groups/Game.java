@@ -1,14 +1,18 @@
 package org.tjorven.musicquiz.groups;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
     private List<Player> members;
-    private final String groupID;
+    private final String gameID;
+
 
     public Game(String groupID) {
-        this.groupID = groupID;
+        this.gameID = groupID;
         members = new ArrayList<>();
     }
 
@@ -24,7 +28,8 @@ public class Game {
         members.remove(member);
     }
 
-    public String getGroupID() {
-        return groupID;
+    public String getGameID() {
+        return gameID;
     }
+
 }
