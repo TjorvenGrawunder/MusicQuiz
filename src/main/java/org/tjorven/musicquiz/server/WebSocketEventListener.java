@@ -27,7 +27,7 @@ public class WebSocketEventListener {
     public void handleWebSocketConnectListener(SessionConnectEvent event) {
         String sessionId = event.getMessage().getHeaders().get("simpSessionId").toString();
         connectedClients.put(sessionId, "connected");
-        webSocketService.notifyAllClients("Neuer Client verbunden: " + sessionId);
+        //webSocketService.notifyAllClients("Neuer Client verbunden: " + sessionId);
     }
 
     // Client-Trennung erfassen
@@ -35,7 +35,7 @@ public class WebSocketEventListener {
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         String sessionId = event.getSessionId();
         connectedClients.remove(sessionId);
-        webSocketService.notifyAllClients("Client getrennt: " + sessionId);
+        //webSocketService.notifyAllClients("Client getrennt: " + sessionId);
     }
 
 

@@ -30,6 +30,7 @@ public class GameStorage {
     }
 
     public void addClientToGame(String userName, String gameID) {
+        System.out.println("Adding " + userName + " to game " + gameID);
         if (games.containsKey(gameID)) {
             games.get(userName).addMember(new Player(userName));
         } else {

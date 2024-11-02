@@ -12,7 +12,7 @@
 
 
     function buzzerClick() {
-        stompClient.send("/app/buzzer-click", {}, gameID);
+        stompClient.send("/app/buzzer-click", {}, userName);
     }
 
     function loadStoredData() {

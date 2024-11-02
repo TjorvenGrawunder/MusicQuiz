@@ -32,6 +32,11 @@ public class ButtonController {
         return message.toString();
     }
 
+    @MessageMapping("/buzzer-click")
+    public void handleBuzzerPress(@Header("simpSessionId") String sessionId, String userName) {
+        webSocketService.notifyGameClients(GameStorage.getInstance().getGames().get(userName), "Buzzer gedrückt von " + userName);
+    }
+
     @MessageMapping("/get-game-click")
     @SendTo("/topic/updates")
     public String handleGetGroupButtonPress(@Header("simpSessionId") String sessionId, ConnectionMessage message) {
