@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz Room</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.4.0/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script>
+    let stompClient = null;
+    let gameID = null;
+    let userName = null;
+    let role = null;
+
+
+    function buzzerClick() {
+        stompClient.send("/app/buzzer-click", {}, userName);
+    }
+
+    function loadStoredData() {
+            console.log("Loading stored data");
+            gameID = sessionStorage.getItem("gameID");
+            userName = sessionStorage.getItem("userName");
+            role = sessionStorage.getItem("role");
+            document.getElementById("userInfo").innerText = `Name: ${userName}, Game: ${gameID}`;
+
+            const socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+
+            stompClient.connect({}, function (frame) {
+                stompClient.subscribe('/topic/updates', function (message) {
+                    document.getElementById('allMessages').innerHTML += "<p>" + message.body + "</p>";
+                });
+                stompClient.subscribe(`/topic/${gameID}`, function (message) {
+                    document.getElementById('gameMessages').innerHTML += "<p>" + message.body + "</p>";
+                });
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", loadStoredData);
+    </script>
+</head>
+<body>
+<h1>Musik Quiz</h1>
+<div id="userInfo">Lade Benutzerinformationen...</div>
+<div id="allMessages"></div>
+<div id="gameMessages"></div>
+<button type="button" onclick="buzzerClick()">Buzzer</button>
+</body>
+</html>

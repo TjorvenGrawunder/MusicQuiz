@@ -1,5 +1,7 @@
 package org.tjorven.musicquiz.groups;
 
+import org.apache.commons.lang3.RandomStringUtils;
+import org.tjorven.musicquiz.exceptions.NoSuchGameException;
 import org.tjorven.musicquiz.server.WebSocketService;
 
 import java.util.ArrayList;
@@ -29,13 +31,18 @@ public class GameStorage {
         return instance;
     }
 
+    public String createGame() {
+        String gameID = RandomStringUtils.random(8, true, true);
+        games.put(gameID, new Game(gameID));
+        return gameID;
+    }
+
     public void addClientToGame(String userName, String gameID) {
         System.out.println("Adding " + userName + " to game " + gameID);
         if (games.containsKey(gameID)) {
             games.get(userName).addMember(new Player(userName));
         } else {
-            games.put(userName, new Game(gameID));
-            games.get(userName).addMember(new Player(userName));
+            throw new NoSuchGameException("Game \"" + gameID + "\" does not exist");
         }
     }
 

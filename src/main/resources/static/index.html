@@ -13,16 +13,50 @@
         // Nachricht senden, dass der Button geklickt wurde
         const message = {
             userName: document.getElementById('userName').value,
-            gameID: document.getElementById('gameID').value
+            gameID: document.getElementById('gameID').value,
+            role: "player"
         }
-        stompClient.send("/app/get-game-click", {}, JSON.stringify(message));
+        stompClient.send("/app/join-game-click", {}, JSON.stringify(message));
 
-        // GameID speichern
-        sessionStorage.setItem('gameID', document.getElementById('gameID').value);
-        // UserName speichern
-        sessionStorage.setItem('userName', document.getElementById('userName').value);
+        stompClient.subscribe('/topic/join-game-response', function (message) {
+            // Nachricht, die an alle Clients gesendet wird, anzeigen
+            const response = JSON.parse(message.body);
+            // GameID speichern
+            sessionStorage.setItem('gameID', response.gameID);
+            // Role speichern
+            sessionStorage.setItem('role', response.role);
+            // UserName speichern
+            sessionStorage.setItem('userName', response.userName);
+            // load next page
+            if (response.errorMessage != null) {
+                alert(response.errorMessage);
+            }else {
+                window.location.assign("player-quiz-room.html");
+            }
+        });
+    }
+
+    function hostGame() {
+        // Nachricht senden, dass der Button geklickt wurde
+        const message = {
+            userName: document.getElementById('userName').value,
+            gameID: null,
+            role: "host"
+        }
+        stompClient.send("/app/host-game-click", {}, JSON.stringify(message));
+
+        stompClient.subscribe('/topic/host-game-response', function (message) {
+            // Nachricht, die an alle Clients gesendet wird, anzeigen
+            const response = JSON.parse(message.body);
+            // GameID speichern
+            sessionStorage.setItem('gameID', response.gameID);
+            // Role speichern
+            sessionStorage.setItem('role', response.role);
+            // UserName speichern
+            sessionStorage.setItem('userName', response.userName);
+        });
         // load next page
-        window.location.assign("quiz-room.html");
+        window.location.assign("host-quiz-room.html");
     }
 
     let stompClient = null;
@@ -50,6 +84,7 @@
 <input type="text" id="userName" name="userName"><br><br>
 <label for="gameID">Game ID:</label>
 <input type="text" id="gameID" name="gameID"><br><br>
-<button type="button" onclick="getGame()">Connect to Group</button>
+<button type="button" onclick="getGame()">Join Game</button>
+<button type="button" onclick="hostGame()">Host Game</button>
 </body>
 </html>
