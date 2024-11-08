@@ -26,5 +26,10 @@ public class WebSocketService {
     public void notifyGameClients(Game game, String message) {
         messagingTemplate.convertAndSend("/topic/" + game.getGameID(), message);
     }
+
+    public void notifyForPlayerUpdate(Game game) {
+        String playersPanelHTML = game.generatePlayersPanelHTML();
+        messagingTemplate.convertAndSend("/topic/player-update/" + game.getGameID(), playersPanelHTML);
+    }
 }
 

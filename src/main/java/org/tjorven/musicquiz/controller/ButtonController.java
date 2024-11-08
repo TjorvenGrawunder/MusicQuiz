@@ -7,6 +7,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.tjorven.musicquiz.exceptions.NoSuchGameException;
 import org.tjorven.musicquiz.groups.GameStorage;
+import org.tjorven.musicquiz.messages.BuzzerMessage;
 import org.tjorven.musicquiz.messages.ConnectionMessage;
 import org.tjorven.musicquiz.messages.HostResponse;
 import org.tjorven.musicquiz.messages.JoinResponse;
@@ -36,8 +37,9 @@ public class ButtonController {
     }
 
     @MessageMapping("/buzzer-click")
-    public void handleBuzzerPress(@Header("simpSessionId") String sessionId, String userName) {
-        webSocketService.notifyGameClients(GameStorage.getInstance().getGames().get(userName), "Buzzer gedrückt von " + userName);
+    public void handleBuzzerPress(@Header("simpSessionId") String sessionId, BuzzerMessage buzzerMessage) {
+        webSocketService.notifyGameClients(GameStorage.getInstance().getGames().get(buzzerMessage.getGameID()),
+                "Buzzer gedrückt von " + buzzerMessage.getUserName());
     }
 
     @MessageMapping("/join-game-click")
@@ -46,6 +48,7 @@ public class ButtonController {
         try {
             System.out.println("Client " + message.getUserName() + " hat Game " + message.getGameID() + " angefordert");
             GameStorage.getInstance().addClientToGame(message.getUserName(), message.getGameID());
+            webSocketService.notifyForPlayerUpdate(GameStorage.getInstance().getGames().get(message.getGameID()));
             return new JoinResponse(message.getUserName(), message.getGameID(), "player", null);
         } catch (NoSuchGameException e) {
             return new JoinResponse(null, null, null, e.getMessage());

@@ -13,14 +13,19 @@
 
 
     function buzzerClick() {
-        stompClient.send("/app/buzzer-click", {}, userName);
+        const buzzerMSG = {
+            userName: userName,
+            gameID: gameID
+        }
+        stompClient.send("/app/buzzer-click", {}, JSON.stringify(buzzerMSG));
     }
 
     function loadStoredData() {
             console.log("Loading stored data");
-            gameID = sessionStorage.getItem("gameID");
-            userName = sessionStorage.getItem("userName");
-            role = sessionStorage.getItem("role");
+            gameID = localStorage.getItem("gameID");
+            userName = localStorage.getItem("userName");
+            role = localStorage.getItem("role");
+            console.log(`Name: ${userName}, Game: ${gameID}`);
             document.getElementById("userInfo").innerText = `Name: ${userName}, Game: ${gameID}`;
 
             const socket = new SockJS('/ws');
@@ -32,6 +37,9 @@
                 });
                 stompClient.subscribe(`/topic/${gameID}`, function (message) {
                     document.getElementById('gameMessages').innerHTML += "<p>" + message.body + "</p>";
+                });
+                stompClient.subscribe(`/topic/player-update/${gameID}`, function (message) {
+                    document.getElementById('playerList').innerHTML = message.body;
                 });
             });
         }
@@ -45,5 +53,6 @@
 <div id="allMessages"></div>
 <div id="gameMessages"></div>
 <button type="button" onclick="buzzerClick()">Buzzer</button>
+<div id="playerList"></div>
 </body>
 </html>

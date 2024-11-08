@@ -39,8 +39,11 @@ public class GameStorage {
 
     public void addClientToGame(String userName, String gameID) {
         System.out.println("Adding " + userName + " to game " + gameID);
+        for (Game game : games.values()) {
+            System.out.println("Game " + game.getGameID());
+        }
         if (games.containsKey(gameID)) {
-            games.get(userName).addMember(new Player(userName));
+            games.get(gameID).addMember(new Player(userName));
         } else {
             throw new NoSuchGameException("Game \"" + gameID + "\" does not exist");
         }
@@ -49,4 +52,5 @@ public class GameStorage {
     public void setWebSocketService(WebSocketService webSocketService) {
         this.webSocketService = webSocketService;
     }
+
 }

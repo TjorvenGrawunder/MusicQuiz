@@ -22,11 +22,11 @@
             // Nachricht, die an alle Clients gesendet wird, anzeigen
             const response = JSON.parse(message.body);
             // GameID speichern
-            sessionStorage.setItem('gameID', response.gameID);
+            localStorage.setItem('gameID', response.gameID);
             // Role speichern
-            sessionStorage.setItem('role', response.role);
+            localStorage.setItem('role', response.role);
             // UserName speichern
-            sessionStorage.setItem('userName', response.userName);
+            localStorage.setItem('userName', response.userName);
             // load next page
             if (response.errorMessage != null) {
                 alert(response.errorMessage);
@@ -49,14 +49,18 @@
             // Nachricht, die an alle Clients gesendet wird, anzeigen
             const response = JSON.parse(message.body);
             // GameID speichern
-            sessionStorage.setItem('gameID', response.gameID);
+            localStorage.setItem('gameID', response.gameID);
             // Role speichern
-            sessionStorage.setItem('role', response.role);
+            localStorage.setItem('role', response.role);
             // UserName speichern
-            sessionStorage.setItem('userName', response.userName);
+            localStorage.setItem('userName', response.userName);
+            // load next page
+            if (response.errorMessage != null) {
+                alert(response.errorMessage);
+            }else {
+                window.location.assign("host-quiz-room.html");
+            }
         });
-        // load next page
-        window.location.assign("host-quiz-room.html");
     }
 
     let stompClient = null;

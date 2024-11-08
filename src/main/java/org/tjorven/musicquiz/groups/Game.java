@@ -32,4 +32,16 @@ public class Game {
         return gameID;
     }
 
+    public String generatePlayersPanelHTML(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("<h2>Players</h2>");
+        sb.append("<ul>");
+        for (Player player : members) {
+            sb.append("<li>");
+            sb.append(player.getName());
+            sb.append("</li>");
+        }
+        sb.append("</ul>");
+        return sb.toString();
+    }
 }
